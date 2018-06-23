@@ -1,0 +1,1 @@
+cmd /k @SET PATH=%~dp0node_modules\.bin;%PATH%
