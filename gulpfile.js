@@ -179,6 +179,21 @@ const startLocalServer = function(){
 };
 
 gulp.task("build", gulpBuildAll);
+gulp.task("deploy", () => {
+	const ftp = require("vinyl-ftp");
+	const ftp_conf = require("./keyconf.js");
+	const conn = ftp.create(ftp_conf);
+	const remotePath = "/";
+	
+	return gulp.src(PATH_CONF.dest_glob, {buffer: false})
+		.pipe(conn.newerOrDifferentSize(remotePath))
+		.pipe(colorful({
+			color : "green",
+			cwd   : PATH_CONF.dest,
+			indent: 1,
+		}))
+		.pipe(conn.dest(remotePath));
+});
 
 gulp.task("watch", function(){
 	//ファイルが直接的に関係するもの

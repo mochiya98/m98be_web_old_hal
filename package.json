@@ -37,6 +37,7 @@
     "http-server": "^0.11.1",
     "lazypipe": "^1.0.1",
     "merge2": "^1.2.2",
-    "uglify-es": "^3.3.9"
+    "uglify-es": "^3.3.9",
+    "vinyl-ftp": "github:JacobDB/vinyl-ftp#issue-90"
   }
 }

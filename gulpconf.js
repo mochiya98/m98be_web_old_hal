@@ -16,6 +16,7 @@ const PATH_CONF = {
 	src_page_md_glob      : "./src/page/**/*.md",
 	src_page_template_glob: "./src/page/**/*.json",
 	dest                  : "./dest/",
+	dest_glob             : "./dest/**/*",
 	dest_raw_js_glob      : "./dest/js/!(app).js",
 	dest_bundle_file      : "./js/app.js",
 };
