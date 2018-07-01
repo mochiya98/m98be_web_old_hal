@@ -23,6 +23,7 @@ const concat = require("gulp-concat");
 const uglifyjs = require("gulp-uglify/composer")(require("uglify-es"), console);
 const cleanCSS = require("gulp-clean-css");
 const changed = require("gulp-changed");
+const sitemap = require("gulp-sitemap");
 
 const lazypipe = require("lazypipe");
 
@@ -140,7 +141,12 @@ const gulpBuildAppBundle = function(){
 	return gulp.src(PATH_CONF.dest_raw_js_glob)
 		.pipe(plumber_custom())
 		.pipe(concat(PATH_CONF.dest_bundle_file))
-		.pipe(gulpGeneralDest());
+};
+const gulpBuildSitemap = function(){
+	return gulp.src(PATH_CONF.dest_html_glob, {read: false})
+		.pipe(sitemap({
+		    siteUrl: BUILD_CONF.site_url,
+		}));
 };
 const gulpBuildAll = function(callback){
 	(async function(){
@@ -150,6 +156,7 @@ const gulpBuildAll = function(callback){
 				.pipe(gulpJsBuilder()),
 			gulp.src(PATH_CONF.src_etc_css_glob, {base: PATH_CONF.src_etc})
 				.pipe(gulpCssBuilder()),
+			gulp.src(PATH_CONF.src_etc_etc_glob),
 			gulp.src(PATH_CONF.src_page_raw_glob)
 				.pipe(gulpPageByRawBuilder()),
 			gulp.src(PATH_CONF.src_page_md_glob)
@@ -160,8 +167,12 @@ const gulpBuildAll = function(callback){
 		])
 			.pipe(gulpGeneralDest());
 		buildStream.on("end", function(){
-			const bundleStream = gulpBuildAppBundle();
-			if(callback)bundleStream.on("end", callback);
+			const nextStream = merge([
+				gulpBuildAppBundle(),
+				gulpBuildSitemap(),
+			])
+				.pipe(gulpGeneralDest());
+			if(callback)nextStream.on("end", callback);
 		});
 	})();
 };
@@ -215,6 +226,12 @@ gulp.task("watch", function(){
 	})
 		.pipe(plumber_custom())
 		.pipe(gulpCssBuilder())
+		.pipe(gulpGeneralDest());
+	//!(js|css)
+	watchColorful(PATH_CONF.src_etc_etc_glob, {
+		events: ["add", "change"],
+	})
+		.pipe(plumber_custom())
 		.pipe(gulpGeneralDest());
 	//page/**/*.json
 	watchColorful(PATH_CONF.src_page_template_glob, {events: ["add", "change"]})
@@ -272,7 +289,13 @@ gulp.task("watch", function(){
 	});
 	//[dest/]js/(!app).js
 	gulpWatchColorful(PATH_CONF.dest_raw_js_glob, function(type, filepath){
-		gulpBuildAppBundle();
+		gulpBuildAppBundle()
+			.pipe(gulpGeneralDest());
+	});
+	//[dest/]**/*.html
+	gulpWatchColorful(PATH_CONF.dest_html_glob, function(type, filepath){
+		gulpBuildSitemap()
+			.pipe(gulpGeneralDest());
 	});
 	
 	//テスト用サーバー
