@@ -53,7 +53,8 @@ const{HttpServer} = require("http-server");
 //init xste&xsspa instance
 var xste_agent;
 const xsspa_agent = new xsspa({
-	base: PATH_CONF.src_base_file,
+	base      : PATH_CONF.src_base_file,
+	base_title: "m98.be",
 });
 const updateXste = function(){
 	xste_agent = new xste(PATH_CONF.src_template);
@@ -140,7 +141,7 @@ const gulpBuildXstaBundle = async function(opts = {}){
 const gulpBuildAppBundle = function(){
 	return gulp.src(PATH_CONF.dest_raw_js_glob)
 		.pipe(plumber_custom())
-		.pipe(concat(PATH_CONF.dest_bundle_file))
+		.pipe(concat(PATH_CONF.dest_bundle_file));
 };
 const gulpBuildSitemap = function(){
 	return gulp.src(PATH_CONF.dest_html_glob, {read: false})

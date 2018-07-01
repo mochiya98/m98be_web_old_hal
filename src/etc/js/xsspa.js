@@ -37,9 +37,13 @@
 		var isJSON = res[0] === "{";
 		if(isJSON){
 			res = JSON.parse(res);
+			if(res.title){
+				document.title = res.title + " - m98.be";
+			}
 			// eslint-disable-next-line no-undef
 			return xste(res.template, res.data);
 		}
+		document.title = "m98.be";
 		return res;
 	}
 	//ページ移動後に発火
