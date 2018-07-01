@@ -5,7 +5,7 @@
 	font-style: normal;
 }
 *{margin:0;padding:0}
-body{font-family:"Segoe UI Emoji","Apple Color Emoji",Meiryo,Koruri;}
+body{font-family:"Segoe UI Emoji","Apple Color Emoji",Meiryo,"Hiragino Maru Gothic ProN","Hiragino Kaku Gothic Pro","ヒラギノ丸ゴ ProN","ヒラギノ角ゴ Pro W3",Koruri,Arial,sans-serif;}
 body,input{line-height:1.5;color:#333;}
 header,section,aside,nav,footer{margin:25px 20px;}
 .taglist,.urllist{list-style-type: none;margin:0.3rem 0;}
