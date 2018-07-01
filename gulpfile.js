@@ -66,7 +66,7 @@ const gulpGeneralDest = lazypipe()
 		cwd   : PATH_CONF.dest,
 		indent: 0,
 	})
-	.pipe(changed, PATH_CONF.dest)
+	.pipe(changed, PATH_CONF.dest, {hasChanged: changed.compareContents})
 	.pipe(gulp.dest, PATH_CONF.dest);
 
 const gulpRenderedPageByTemplateBuilder = lazypipe()
