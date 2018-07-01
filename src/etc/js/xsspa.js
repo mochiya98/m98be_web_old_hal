@@ -1,6 +1,5 @@
 /*
 	[!]必ずdefer属性付きで参照させて下さい！
-	[!]これ改変＆自前minifyする人は"cc_on"部の最適化に要注意！
 
 	出来るだけjs圧縮で何とかなる箇所は
 	分かりやすく書いていますが、
@@ -89,7 +88,8 @@
 	function showLoading(flg){
 		_documentElement.classList[flg ? "add" : "remove"]("xsspa-loading");
 	}
-	function updateState(new_path, update_path){//console.log(new_path?"push":"replace", new_path, update_path);
+	function updateState(new_path, update_path){
+		//console.log(new_path?"push":"replace", new_path, update_path);
 		update_path = new_path ? new_path : path_current;
 		if(loading)return;
 		_history[new_path ? "pushState" : "replaceState"]({
@@ -108,9 +108,7 @@
 		//eslint-disable-next-line no-unused-expressions
 		_window.stop && _window.stop();
 		//人間が負担を感じない程早ければloading見せない
-		var timer_showLoading = setTimeout(function(){
-			showLoading(1);
-		}, 50);
+		var timer_showLoading = setTimeout(showLoading, 50, 1);
 		if(xhr_agent){
 			xhr_agent.abort();
 		}
@@ -119,7 +117,7 @@
 			path_moveTo
 				.replace(/\/$/g, "/index")
 				.replace(/\.html$/, "")
-				.replace(/^([^?]+)/, "$1.src.json");
+				.replace(/^[^?]+/, "$&.src.json");
 		xhr_agent.open("GET", addr, true);
 		xhr_agent.send();
 		//xhr.on("load",function(){});
@@ -150,15 +148,15 @@
 		//xhr.on("error",function(e){});
 		xhr_agent.ontimeout =
 		xhr_agent.onerror = function(e){
-			console.log("load error", e);
+			//console.log("load error", e);
 			showLoading(0);
 			location.href = path_moveTo;
-			loading = false;
+			loading = 0;
 		};
 		loading = 1;
 	}
 
-	if(_history && _history.pushState){
+	if(_history.pushState){
 		_history.scrollRestoration = "manual";
 		if(_history.state){
 			scrollBase.scrollLeft = _history.state.x;
