@@ -12,7 +12,7 @@ const PATH_CONF = {
 	src_etc               : "./src/etc/",
 	src_etc_js_glob       : "./src/etc/**/*.js",
 	src_etc_css_glob      : "./src/etc/**/*.css",
-	src_etc_etc_glob      : "./src/etc/**/*.!({js,css})",
+	src_etc_etc_glob      : "./src/etc/**/*.!(js|css)",
 	src_page_raw_glob     : "./src/page/**/*.html",
 	src_page_md_glob      : "./src/page/**/*.md",
 	src_page_template_glob: "./src/page/**/*.json",
