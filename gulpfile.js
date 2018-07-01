@@ -95,7 +95,7 @@ const gulpJsBuilder = lazypipe()
 
 const gulpCssBuilder = lazypipe()
 	.pipe(any2lf)
-	.pipe(cleanCSS);
+	.pipe(cleanCSS, {level: 2});
 
 const gulpPageByTemplateBuilder = lazypipe()
 	.pipe(()=>mirror(
