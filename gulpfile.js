@@ -38,6 +38,7 @@ const plumber_custom = lazypipe()
 const xste = require("./lib/gulp-xste");
 const xsspa = require("./lib/gulp-xsspa");
 const md2json = require("./lib/gulp-md2json");
+const ogp = require("./lib/gulp-ogp");
 const any2lf = lazypipe()
 	.pipe(eol, "\n", false);
 const{
@@ -75,7 +76,8 @@ const gulpRenderedPageByTemplateBuilder = lazypipe()
 	.pipe(xste_agent.compile, {outputExtension: "html"})
 	.pipe(xsspa_agent.compile)
 	.pipe(htmlmin, htmlmin_opts)
-	.pipe(any2lf);
+	.pipe(any2lf)
+	.pipe(ogp, {image: "https://m98.be/pic/og.png"});
 
 const gulpSourcePageByTemplateBuilder = lazypipe()
 	.pipe(rename, {extname: ".src.json"});
@@ -83,7 +85,8 @@ const gulpSourcePageByTemplateBuilder = lazypipe()
 const gulpRenderedPageByRawBuilder = lazypipe()
 	.pipe(xsspa_agent.compile)
 	.pipe(htmlmin, htmlmin_opts)
-	.pipe(any2lf);
+	.pipe(any2lf)
+	.pipe(ogp, {image: "https://m98.be/pic/og.png"});
 
 const gulpSourcePageByRawBuilder = lazypipe()
 	.pipe(htmlmin, htmlmin_opts)

@@ -48,7 +48,7 @@ footer{color:#666;border-top:1px solid #bbb;padding-top:20px;}
 .works section{margin:10px 20px;}
 .works section>a{color:inherit;display:block;text-decoration:none;}
 .works section>a:hover{background-color:#f0f0f0;text-decoration:underline;}
-.works section>a h1{font-size:1.3rem;}
+.works section>a h2{font-size:1.3rem;}
 
 .top hr{border-width:0;border-bottom:1px solid #000;}
 .top s{color:#999;}
