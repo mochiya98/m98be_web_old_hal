@@ -21,6 +21,7 @@
     "eslint": "^5.0.1",
     "glob": "^7.1.2",
     "gulp": "^4.0.0",
+    "gulp-changed": "^3.2.0",
     "gulp-clean-css": "^3.9.4",
     "gulp-colorfulkits": "^0.1.7",
     "gulp-concat": "^2.6.1",

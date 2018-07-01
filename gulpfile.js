@@ -22,6 +22,7 @@ const eol = require("gulp-eol");
 const concat = require("gulp-concat");
 const uglifyjs = require("gulp-uglify/composer")(require("uglify-es"), console);
 const cleanCSS = require("gulp-clean-css");
+const changed = require("gulp-changed");
 
 const lazypipe = require("lazypipe");
 
@@ -65,6 +66,7 @@ const gulpGeneralDest = lazypipe()
 		cwd   : PATH_CONF.dest,
 		indent: 0,
 	})
+	.pipe(changed, PATH_CONF.dest)
 	.pipe(gulp.dest, PATH_CONF.dest);
 
 const gulpRenderedPageByTemplateBuilder = lazypipe()
