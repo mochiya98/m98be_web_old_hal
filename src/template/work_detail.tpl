@@ -15,7 +15,4 @@
 			<%=self.contents%>
 		</section>
 	</article>
-	<footer>
-		<p>(c)2018 YukimasaFunaoka</p>
-	</footer>
 </div>

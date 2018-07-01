@@ -44,8 +44,7 @@ background:#fff linear-gradient(-45deg, #f7f7f7 25%, #fff 25%, #fff 50%, #f7f7f7
 .work_detail .md strong{color:#f40;background-color:#ffa;}
 a{color:#0366d6;}
 a:hover{color:#08f;}
-footer{color:#333;}
-footer:before{content:"";display:block;border-top:1px solid #000;margin-bottom:20px;}
+footer{color:#666;border-top:1px solid #bbb;padding-top:20px;}
 .works section{margin:10px 20px;}
 .works section>a{color:inherit;display:block;text-decoration:none;}
 .works section>a:hover{background-color:#f0f0f0;text-decoration:underline;}
