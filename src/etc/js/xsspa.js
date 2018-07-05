@@ -36,14 +36,15 @@
 	function decoder(res){
 		var isJSON = res[0] === "{";
 		if(isJSON){
+			//eslint-disable-next-line no-param-reassign
 			res = JSON.parse(res);
 			if(res.title){
-				document.title = res.title + " - m98.be";
+				_document.title = res.title + " - m98.be";
 			}
 			// eslint-disable-next-line no-undef
 			return xste(res.template, res.data);
 		}
-		document.title = "m98.be";
+		_document.title = "m98.be";
 		return res;
 	}
 	//ページ移動後に発火
@@ -53,39 +54,25 @@
 		//if(_window.echo)echo.render();
 	}
 	
-	/*\
-	|*|
-	|*|  :: Translate relative paths to absolute paths ::
-	|*|
-	|*|  https://developer.mozilla.org/en-US/docs/Web/API/document.cookie
-	|*|  https://developer.mozilla.org/User:fusionchess
-	|*|
-	|*|  The following code is released under the GNU Public License, version 3 or later.
-	|*|  http://www.gnu.org/licenses/gpl-3.0-standalone.html
-	|*|
-	\*/
-	function relPathToAbs(sRelPath){
-		var nUpLn,
-			sDir = "",
-			sPath = _location.pathname.replace(
-				/[^\/]*$/,
-				sRelPath.replace(/(\/|^)(?:\.?\/+)+/g, "$1")
-			);
-		for(
-			var nEnd, nStart = 0;
-			nEnd = sPath.indexOf("/../", nStart), nEnd > -1;
-			nStart = nEnd + nUpLn
-		){
-			nUpLn = /^\/(?:\.\.\/)*/.exec(sPath.slice(nEnd))[0].length;
-			sDir = (
-				sDir
-				+ sPath.substring(nStart, nEnd)
-			).replace(
-				new RegExp("(?:\\\/+[^\\\/]*){0," + ((nUpLn - 1) / 3) + "}$")
-				, "/"
-			);
+	function relPathToAbs(relative){
+		var parts = relative.split("/"),
+			stack =
+				relative[0] === "/"
+					? []
+					: location.pathname.replace(/\/[^\/]+$/, "")
+						.split("/");
+			
+		for(var i = 0; i < parts.length; i++){
+			if(parts[i] !== "."){
+				if(parts[i] === ".."){
+					stack.pop();
+				}else{
+					stack.push(parts[i]);
+				}
+			}
 		}
-		return sDir + sPath.substr(nStart);
+		return stack.join("/")
+			.replace(/\/\//g, "/");
 	}
 
 
@@ -94,6 +81,7 @@
 	}
 	function updateState(new_path, update_path){
 		//console.log(new_path?"push":"replace", new_path, update_path);
+		//eslint-disable-next-line no-param-reassign
 		update_path = new_path ? new_path : path_current;
 		if(loading)return;
 		_history[new_path ? "pushState" : "replaceState"]({
@@ -105,23 +93,22 @@
 
 	function loadPage(path_moveTo, state, isFromHistory){
 		//eslint-disable-next-line no-param-reassign
-		if(path_moveTo[0] !== "/"){
-			path_moveTo = relPathToAbs(path_moveTo);
-		}
+		path_moveTo = relPathToAbs(path_moveTo);
 		if(path_current === path_moveTo)return;
+		
 		//eslint-disable-next-line no-unused-expressions
-		_window.stop && _window.stop();
 		//人間が負担を感じない程早ければloading見せない
 		var timer_showLoading = setTimeout(showLoading, 50, 1);
-		if(xhr_agent){
-			xhr_agent.abort();
-		}
-		xhr_agent = new XMLHttpRequest();
 		var addr =
 			path_moveTo
 				.replace(/\/$/g, "/index")
 				.replace(/\.html$/, "")
 				.replace(/^[^?]+/, "$&.src.json");
+		if(_window.stop) _window.stop();
+		if(xhr_agent){
+			xhr_agent.abort();
+		}
+		xhr_agent = new XMLHttpRequest();
 		xhr_agent.open("GET", addr, true);
 		xhr_agent.send();
 		//xhr.on("load",function(){});
