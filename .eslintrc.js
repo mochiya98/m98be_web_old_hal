@@ -10,7 +10,7 @@ module.exports = {
     },
     "extends": "eslint:recommended",
     "rules": {
-
+        "no-inner-declarations": ["off"],
         "no-console": ["off"],
         "no-constant-condition": ["warn"],
         "no-template-curly-in-string": ["warn"],
@@ -22,7 +22,7 @@ module.exports = {
         "no-extend-native": ["error"],
         "no-implicit-globals": ["warn"],
         "no-implied-eval": ["warn"],
-        "no-invalid-this": ["error"],
+        //"no-invalid-this": ["error"],
         "no-lone-blocks": ["warn"],
         "no-loop-func": ["error"],
         "no-multi-spaces": ["error", {"exceptions": {"Property": true, "BinaryExpression": true, "VariableDeclarator": true, "ImportDeclaration": true}}],
