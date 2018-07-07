@@ -8,7 +8,7 @@ url:
   - name: github(server-side)
     url: https://github.com/mochiya98/hw_manager_api
   - name: Demo
-    url: https://mochiya98.tk/hw_manager/
+    url: https://github.m98.be/hw_manager/
 tag:
   - Docker
   - E2ETest
@@ -28,4 +28,4 @@ Web上で課題の追加/変更/削除/確認、及びLINEでの前日リマイ�
 半分お試し。一通りE2Eテスト出来るようにした。
 ## OpenAPI(旧Swagger)
 API仕様を明確に。サーバーサイドではパラメータのValidationにも利用。  
-[APIDocs](https://mochiya98.tk/hw_manager_api/)
+[APIDocs](https://github.m98.be/hw_manager_api/)
