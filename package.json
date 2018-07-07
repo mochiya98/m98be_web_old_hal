@@ -15,7 +15,8 @@
   "dependencies": {
     "front-matter": "^2.3.0",
     "marked": "^0.4.0",
-    "mz": "^2.7.0"
+    "mz": "^2.7.0",
+    "xste": "^0.1.4"
   },
   "devDependencies": {
     "eslint": "^5.0.1",
