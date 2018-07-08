@@ -59,7 +59,7 @@
 			stack =
 				relative[0] === "/"
 					? []
-					: location.pathname.replace(/\/[^\/]+$/, "")
+					: _location.pathname.replace(/\/[^\/]+$/, "")
 						.split("/");
 			
 		for(var i = 0; i < parts.length; i++){
@@ -100,7 +100,6 @@
 		path_moveTo = relPathToAbs(path_moveTo);
 		if(path_current === path_moveTo)return;
 		
-		//eslint-disable-next-line no-unused-expressions
 		//人間が負担を感じない程早ければloading見せない
 		var timer_showLoading = setTimeout(showLoading, 50, 1);
 		var addr =
@@ -108,7 +107,15 @@
 				.replace(/\/$/g, "/index")
 				.replace(/\.html$/, "")
 				.replace(/^[^?]+/, "$&.src.json");
-		if(_window.stop) _window.stop();
+		
+		function xhr_fallback(e){
+			//console.log("load error", e);
+			//showLoading(0);
+			_location.href = path_moveTo;
+			//loading = 0;
+		}
+		
+		if(_window.stop)_window.stop();
 		if(xhr_agent){
 			xhr_agent.abort();
 		}
@@ -116,11 +123,10 @@
 		xhr_agent.open("GET", addr, true);
 		xhr_agent.send();
 		//xhr.on("load",function(){});
-		//console.log(xhr.onload);
 		xhr_agent.onload = function(){
 			//console.log(xhr, xhr.status);
 			if(xhr_agent.status >= 400){
-				xhr_agent.onerror();
+				xhr_fallback();
 				return;
 			}
 			clearInterval(timer_showLoading);
@@ -130,7 +136,7 @@
 			content.innerHTML = decoder(xhr_agent.responseText);
 			updateScrollPosition(!state);
 			if(!isFromHistory){
-				updateState(path_moveTo);
+				updateState(path_moveTo);//pushState
 			}
 			path_current = path_moveTo;
 			xhr_agent = null;
@@ -139,12 +145,7 @@
 		xhr_agent.timeout = 5000;
 		//xhr.on("error",function(e){});
 		xhr_agent.ontimeout =
-		xhr_agent.onerror = function(e){
-			//console.log("load error", e);
-			showLoading(0);
-			location.href = path_moveTo;
-			loading = 0;
-		};
+		xhr_agent.onerror = xhr_fallback;
 		loading = 1;
 	}
 
