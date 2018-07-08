@@ -23,7 +23,7 @@ header,section,aside,nav,footer{margin:25px 20px;}
 	padding-left:0.3em;
 }
 .linkbtn{display:inline-block;margin:0.5rem 0;}
-#header_bw{border-bottom:4px solid #000;padding:5px;margin:0;width:100%;position:fixed;top:0;left:0;}
+#header_bw{border-bottom:4px solid #000;padding:5px;margin:0;width:100%;position:fixed;top:0;left:0;z-index:1;}
 #header_bw+*{margin-top:calc(1.95rem + 34px);}
 #header_bw h1{display:inline-block;text-indent:0.4em;text-shadow:1px 1px 0 #fff, 2px 2px 0 #999;}
 #header_bw h1,#header_bw{font-weight:bold;font-size:1.3rem;}
