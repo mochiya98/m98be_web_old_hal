@@ -19,11 +19,11 @@
 		_location = location;
 	var _windowAddEventListener = _window.addEventListener.bind(_window);
 	/* eslint-disable no-constant-condition */
-	var content = _document.getElementById("content"), //テンプレートコンテナ要素
-		scrollBase = _document.scrollingElement || _documentElement;
-	var loading = 0,
-		path_current = _location.pathname;
-	var xhr_agent;
+	var _content = _document.getElementById("content"), //テンプレートコンテナ要素
+		_scroll_base = _document.scrollingElement || _documentElement;
+	var _loading = 0,
+		_path_current = _location.pathname;
+	var _xhr_agent;
 	/* eslint-enable no-constant-condition */
 	
 	//.srcファイルを処理する関数。
@@ -34,8 +34,8 @@
 	//  (プリレンダ/SSRでmarkdown処理させるのはどうよって話)
 	//  尚xsteは0.3KB(!)なのでパーサの通信コストは安心！！(推していく
 	function decoder(res){
-		var isJSON = res[0] === "{";
-		if(isJSON){
+		var is_json = res[0] === "{";
+		if(is_json){
 			//eslint-disable-next-line no-param-reassign
 			res = JSON.parse(res);
 			if(res.title){
@@ -82,23 +82,23 @@
 	function updateState(new_path, update_path){
 		//console.log(new_path?"push":"replace", new_path, update_path);
 		//eslint-disable-next-line no-param-reassign
-		update_path = new_path ? new_path : path_current;
-		if(loading)return;
+		update_path = new_path ? new_path : _path_current;
+		if(_loading)return;
 		_history[new_path ? "pushState" : "replaceState"]({
 			//p: update_path,
-			x: scrollBase.scrollLeft,
-			y: scrollBase.scrollTop,
+			x: _scroll_base.scrollLeft,
+			y: _scroll_base.scrollTop,
 		}, null, update_path);
 	}
 	function updateScrollPosition(toTop){
-		scrollBase.scrollLeft = toTop ? 0 : _history.state.x;
-		scrollBase.scrollTop = toTop ? 0 : _history.state.y;
+		_scroll_base.scrollLeft = toTop ? 0 : _history.state.x;
+		_scroll_base.scrollTop = toTop ? 0 : _history.state.y;
 	}
 
 	function loadPage(path_moveTo, state, isFromHistory){
 		//eslint-disable-next-line no-param-reassign
 		path_moveTo = relPathToAbs(path_moveTo);
-		if(path_current === path_moveTo)return;
+		if(_path_current === path_moveTo)return;
 		
 		//人間が負担を感じない程早ければloading見せない
 		var timer_showLoading = setTimeout(showLoading, 50, 1);
@@ -116,37 +116,37 @@
 		}
 		
 		if(_window.stop)_window.stop();
-		if(xhr_agent){
-			xhr_agent.abort();
+		if(_xhr_agent){
+			_xhr_agent.abort();
 		}
-		xhr_agent = new XMLHttpRequest();
-		xhr_agent.open("GET", addr, true);
-		xhr_agent.send();
+		_xhr_agent = new XMLHttpRequest();
+		_xhr_agent.open("GET", addr, true);
+		_xhr_agent.send();
 		//xhr.on("load",function(){});
-		xhr_agent.onload = function(){
+		_xhr_agent.onload = function(){
 			//console.log(xhr, xhr.status);
-			if(xhr_agent.status >= 400){
+			if(_xhr_agent.status >= 400){
 				xhr_fallback();
 				return;
 			}
 			clearInterval(timer_showLoading);
 			showLoading(0);
-			loading = 0;
+			_loading = 0;
 			
-			content.innerHTML = decoder(xhr_agent.responseText);
+			_content.innerHTML = decoder(_xhr_agent.responseText);
 			updateScrollPosition(!state);
 			if(!isFromHistory){
 				updateState(path_moveTo);//pushState
 			}
-			path_current = path_moveTo;
-			xhr_agent = null;
+			_path_current = path_moveTo;
+			_xhr_agent = null;
 			onAfterPageMoved();
 		};
-		xhr_agent.timeout = 5000;
+		_xhr_agent.timeout = 5000;
 		//xhr.on("error",function(e){});
-		xhr_agent.ontimeout =
-		xhr_agent.onerror = xhr_fallback;
-		loading = 1;
+		_xhr_agent.ontimeout =
+		_xhr_agent.onerror = xhr_fallback;
+		_loading = 1;
 	}
 
 	if(_history.pushState){
