@@ -85,10 +85,14 @@
 		update_path = new_path ? new_path : path_current;
 		if(loading)return;
 		_history[new_path ? "pushState" : "replaceState"]({
-			p: update_path,
+			//p: update_path,
 			x: scrollBase.scrollLeft,
 			y: scrollBase.scrollTop,
 		}, null, update_path);
+	}
+	function updateScrollPosition(toTop){
+		scrollBase.scrollLeft = toTop ? 0 : _history.state.x;
+		scrollBase.scrollTop = toTop ? 0 : _history.state.y;
 	}
 
 	function loadPage(path_moveTo, state, isFromHistory){
@@ -124,12 +128,9 @@
 			loading = 0;
 			
 			content.innerHTML = decoder(xhr_agent.responseText);
-			if(isFromHistory){
-				scrollBase.scrollTop = state.y;
-			}else{
-				//updateState();
+			updateScrollPosition(!state);
+			if(!isFromHistory){
 				updateState(path_moveTo);
-				scrollBase.scrollTop = 0;
 			}
 			path_current = path_moveTo;
 			xhr_agent = null;
@@ -149,10 +150,7 @@
 
 	if(_history.pushState){
 		_history.scrollRestoration = "manual";
-		if(_history.state){
-			scrollBase.scrollLeft = _history.state.x;
-			scrollBase.scrollTop = _history.state.y;
-		}
+		if(_history.state)updateScrollPosition();
 		//色々試した結果落ち着いたスクロール同期法がこれ。
 		//若干キモいけどyahoo/fluxible.gitもこんな感じだし…
 		//挙動いい感じにするにはこれしかないらしい(半ば諦め
@@ -161,15 +159,14 @@
 		setInterval(updateState, 500);
 		
 		_windowAddEventListener("popstate", function(e){
-			var state = e.state;
-			if(state)loadPage(state.p, state, 1);
+			loadPage(_location.pathname, e.state, 1);
 		}, false);
 		
 		_windowAddEventListener("click", function(e){
 			if(e.button === 2 || e.ctrlKey || e.altKey || e.shiftKey)return;
 			for(
 				var href, target = e.target;
-				target.parentNode !== null && target.parentNode !== target;
+				target.parentNode && target.parentNode !== target;
 				target = target.parentNode
 			){
 				if(target.nodeName === "A"){
@@ -181,7 +178,6 @@
 			if(href){
 				e.preventDefault();
 				loadPage(href);
-				return false;
 			}
 		}, true);
 	}
