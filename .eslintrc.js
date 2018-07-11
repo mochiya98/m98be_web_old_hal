@@ -4,8 +4,8 @@ module.exports = {
       "sourceType": "module"
     },
     "env": {
-		  "node": true,
-		  "browser": true,
+        "node": true,
+        "browser": true,
         "es6": true
     },
     "extends": "eslint:recommended",
