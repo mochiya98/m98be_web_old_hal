@@ -10,7 +10,8 @@ const{
 } = require("./gulpconf");
 
 const gulp = require("gulp");
-const gutil = require("gulp-util");
+const log = require("fancy-log");
+const colors = require("ansi-colors");
 
 const rename = require("gulp-rename");
 const htmlmin = require("gulp-htmlmin");
@@ -31,7 +32,7 @@ const htmlmin_opts = {collapseWhitespace: true};
 const plumber_custom = lazypipe()
 	.pipe(plumber, {
 		errorHandler: function(e){
-			gutil.log(gutil.colors.bold(gutil.colors.red(`(${e.plugin}): ${e.message}`)));
+			log(colors.bold(colors.red(`(${e.plugin}): ${e.message}`)));
 		},
 	});
 
@@ -190,7 +191,7 @@ const startLocalServer = function(){
 		showDir  : true,
 	});
 	testServer.listen(TEST_SERVER_CONF.port);
-	gutil.log(gutil.colors.bold(gutil.colors.green(
+	log(colors.bold(colors.green(
 		`Listening at 127.0.0.1:${TEST_SERVER_CONF.port}`
 	)));
 };
