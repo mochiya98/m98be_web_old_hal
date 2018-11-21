@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "front-matter": "^3.0.1",
-    "marked": "^0.5.1",
+    "marked": "^0.5.2",
     "mz": "^2.7.0",
     "xste": "^0.1.4"
   },
