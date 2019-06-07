@@ -132,8 +132,8 @@ const gulpRenderedPageBuilder = function(opts = {}){
 	
 	return merge(rawSrc, tplSrc, mdSrc);
 };
-const gulpBuildXstaBundle = async function(opts = {}){
-	let bundleStream = await xste.bundle({
+const gulpBuildXstaBundle = function(opts = {}){
+	let bundleStream = xste.bundle({
 		mode: BUILD_CONF.xste_bundle_mode,
 		src : [PATH_CONF.src_template],
 	});
@@ -154,32 +154,30 @@ const gulpBuildSitemap = function(){
 		}));
 };
 const gulpBuildAll = function(callback){
-	(async function(){
-		const buildStream = merge([
-			await gulpBuildXstaBundle(),
-			gulp.src(PATH_CONF.src_etc_js_glob, {base: PATH_CONF.src_etc})
-				.pipe(gulpJsBuilder()),
-			gulp.src(PATH_CONF.src_etc_css_glob, {base: PATH_CONF.src_etc})
-				.pipe(gulpCssBuilder()),
-			gulp.src(PATH_CONF.src_etc_etc_glob),
-			gulp.src(PATH_CONF.src_page_raw_glob)
-				.pipe(gulpPageByRawBuilder()),
-			gulp.src(PATH_CONF.src_page_md_glob)
-				.pipe(md2json())
-				.pipe(gulpPageByTemplateBuilder()),
-			gulp.src(PATH_CONF.src_page_template_glob)
-				.pipe(gulpPageByTemplateBuilder()),
+	const buildStream = merge([
+		gulpBuildXstaBundle(),
+		gulp.src(PATH_CONF.src_etc_js_glob, {base: PATH_CONF.src_etc})
+			.pipe(gulpJsBuilder()),
+		gulp.src(PATH_CONF.src_etc_css_glob, {base: PATH_CONF.src_etc})
+			.pipe(gulpCssBuilder()),
+		gulp.src(PATH_CONF.src_etc_etc_glob),
+		gulp.src(PATH_CONF.src_page_raw_glob)
+			.pipe(gulpPageByRawBuilder()),
+		gulp.src(PATH_CONF.src_page_md_glob)
+			.pipe(md2json())
+			.pipe(gulpPageByTemplateBuilder()),
+		gulp.src(PATH_CONF.src_page_template_glob)
+			.pipe(gulpPageByTemplateBuilder()),
+	])
+		.pipe(gulpGeneralDest());
+	buildStream.on("end", function(){
+		const nextStream = merge([
+			gulpBuildAppBundle(),
+			gulpBuildSitemap(),
 		])
 			.pipe(gulpGeneralDest());
-		buildStream.on("end", function(){
-			const nextStream = merge([
-				gulpBuildAppBundle(),
-				gulpBuildSitemap(),
-			])
-				.pipe(gulpGeneralDest());
-			if(callback)nextStream.on("end", callback);
-		});
-	})();
+		if(callback)nextStream.on("end", callback);
+	});
 };
 const startLocalServer = function(){
 	const testServer = new HttpServer({
@@ -266,12 +264,12 @@ gulp.task("watch", function(){
 		}
 	});
 	//template/*.tpl
-	gulpWatchColorful(PATH_CONF.src_template_glob, async function(type, filepath){
+	gulpWatchColorful(PATH_CONF.src_template_glob, function(type, filepath){
 		console.log(type);
 		if(type === "add" || type === "unlink"){
 			updateXste();
 		}
-		(await gulpBuildXstaBundle())
+		gulpBuildXstaBundle()
 			.pipe(gulpGeneralDest());
 		if(type === "change" || type === "add"){
 			let template_name = path.parse(filepath).name;
