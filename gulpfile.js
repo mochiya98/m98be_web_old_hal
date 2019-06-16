@@ -40,6 +40,7 @@ const xste = require("./lib/gulp-xste");
 const xsspa = require("./lib/gulp-xsspa");
 const md2json = require("./lib/gulp-md2json");
 const ogp = require("./lib/gulp-ogp");
+const evaluatejs = require("./lib/gulp-evaluatejs");
 const any2lf = lazypipe()
 	.pipe(eol, "\n", false);
 const{
@@ -166,6 +167,9 @@ const gulpBuildAll = function(callback){
 		gulp.src(PATH_CONF.src_page_md_glob)
 			.pipe(md2json())
 			.pipe(gulpPageByTemplateBuilder()),
+		gulp.src(PATH_CONF.src_page_template_gen_glob)
+			.pipe(evaluatejs())
+			.pipe(gulpPageByTemplateBuilder()),
 		gulp.src(PATH_CONF.src_page_template_glob)
 			.pipe(gulpPageByTemplateBuilder()),
 	])
@@ -241,6 +245,12 @@ gulp.task("watch", function(){
 		.pipe(plumber_custom())
 		.pipe(gulpPageByTemplateBuilder())
 		.pipe(gulpGeneralDest());
+	//page/**/*.json.js
+	watchColorful(PATH_CONF.src_page_template_gen_glob, {events: ["add", "change"]})
+		.pipe(plumber_custom())
+		.pipe(evaluatejs())
+		.pipe(gulpPageByTemplateBuilder())
+		.pipe(gulpGeneralDest());
 	//page/**/*.md
 	watchColorful(PATH_CONF.src_page_md_glob, {events: ["add", "change"]})
 		.pipe(plumber_custom())
@@ -278,6 +288,8 @@ gulp.task("watch", function(){
 			//Incremental Rebuild
 			merge(
 				gulp.src(PATH_CONF.src_page_template_glob),
+				gulp.src(PATH_CONF.src_page_template_gen_glob)
+					.pipe(evaluatejs()),
 				gulp.src(PATH_CONF.src_page_md_glob)
 					.pipe(md2json())
 			)
