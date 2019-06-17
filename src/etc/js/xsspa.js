@@ -11,7 +11,7 @@
 	(単一責任原則違反！)
 	(しゃーないんです許して…)
 */
-(function(){
+(function() {
 	var _document = document,
 		_window = window;
 	var _documentElement = _document.documentElement,
@@ -25,7 +25,7 @@
 		_path_current = _location.pathname;
 	var _xhr_agent;
 	/* eslint-enable no-constant-condition */
-	
+
 	//.srcファイルを処理する関数。
 	//このサンプルはxsteのjson＆生htmlを処理できる設定
 	//ここを書き換えれば、例えばmarked.jsを用いてmarkdownをparseさせたりもできる
@@ -33,12 +33,12 @@
 	//  毎回生htmlの通信コスト、どちらを優先するか、などなど
 	//  (プリレンダ/SSRでmarkdown処理させるのはどうよって話)
 	//  尚xsteは0.3KB(!)なのでパーサの通信コストは安心！！(推していく
-	function decoder(res){
+	function decoder(res) {
 		var is_json = res[0] === "{";
-		if(is_json){
+		if (is_json) {
 			//eslint-disable-next-line no-param-reassign
 			res = JSON.parse(res);
-			if(res.title){
+			if (res.title) {
 				_document.title = res.title + " - m98.be";
 			}
 			// eslint-disable-next-line no-undef
@@ -49,94 +49,94 @@
 	}
 	//ページ移動後に発火
 	//lazyloadとか発火させたければここに挿入
-	function onAfterPageMoved(){
+	function onAfterPageMoved() {
 		// eslint-disable-next-line no-undef
 		//if(_window.echo)echo.render();
 	}
-	
-	function relPathToAbs(relative){
+
+	function relPathToAbs(relative) {
 		var parts = relative.split("/"),
 			stack =
 				relative[0] === "/"
 					? []
-					: _location.pathname.replace(/\/[^\/]+$/, "")
-						.split("/");
-			
-		for(var i = 0; i < parts.length; i++){
-			if(parts[i] !== "."){
-				if(parts[i] === ".."){
+					: _location.pathname.replace(/\/[^\/]+$/, "").split("/");
+
+		for (var i = 0; i < parts.length; i++) {
+			if (parts[i] !== ".") {
+				if (parts[i] === "..") {
 					stack.pop();
-				}else{
+				} else {
 					stack.push(parts[i]);
 				}
 			}
 		}
-		return stack.join("/")
-			.replace(/\/\//g, "/");
+		return stack.join("/").replace(/\/\//g, "/");
 	}
 
-
-	function showLoading(flg){
+	function showLoading(flg) {
 		_documentElement.classList[flg ? "add" : "remove"]("xsspa-loading");
 	}
-	function updateState(new_path, update_path){
+	function updateState(new_path, update_path) {
 		//console.log(new_path?"push":"replace", new_path, update_path);
 		//eslint-disable-next-line no-param-reassign
 		update_path = new_path ? new_path : _path_current;
-		if(_loading)return;
-		_history[new_path ? "pushState" : "replaceState"]({
-			//p: update_path,
-			x: _scroll_base.scrollLeft,
-			y: _scroll_base.scrollTop,
-		}, null, update_path);
+		if (_loading) return;
+		_history[new_path ? "pushState" : "replaceState"](
+			{
+				//p: update_path,
+				x: _scroll_base.scrollLeft,
+				y: _scroll_base.scrollTop,
+			},
+			null,
+			update_path,
+		);
 	}
-	function updateScrollPosition(toTop){
+	function updateScrollPosition(toTop) {
 		_scroll_base.scrollLeft = toTop ? 0 : _history.state.x;
 		_scroll_base.scrollTop = toTop ? 0 : _history.state.y;
 	}
 
-	function loadPage(path_moveTo, state, isFromHistory){
+	function loadPage(path_moveTo, state, isFromHistory) {
 		//eslint-disable-next-line no-param-reassign
 		path_moveTo = relPathToAbs(path_moveTo);
-		if(_path_current === path_moveTo)return;
-		
+		if (_path_current === path_moveTo) return;
+
 		//人間が負担を感じない程早ければloading見せない
 		var timer_showLoading = setTimeout(showLoading, 50, 1);
-		var addr =
-			path_moveTo
-				.replace(/\/$/g, "/index")
-				.replace(/\.html$/, "")
-				.replace(/^[^?]+/, "$&.src.json");
-		
-		function xhr_fallback(e){
+		var addr = path_moveTo
+			.replace(/\/$/g, "/index")
+			.replace(/\.html$/, "")
+			.replace(/^[^?]+/, "$&.src.json");
+
+		function xhr_fallback(e) {
 			//console.log("load error", e);
 			//showLoading(0);
 			_location.href = path_moveTo;
 			//loading = 0;
 		}
-		
-		if(_window.stop)_window.stop();
-		if(_xhr_agent){
+
+		if (_window.stop) _window.stop();
+		if (_xhr_agent) {
 			_xhr_agent.abort();
 		}
 		_xhr_agent = new XMLHttpRequest();
 		_xhr_agent.open("GET", addr, true);
 		_xhr_agent.send();
 		//xhr.on("load",function(){});
-		_xhr_agent.onload = function(){
+		_xhr_agent.onload = function() {
 			//console.log(xhr, xhr.status);
-			if(_xhr_agent.status >= 400){
+			if (_xhr_agent.status >= 400) {
 				xhr_fallback();
 				return;
 			}
 			clearInterval(timer_showLoading);
 			showLoading(0);
 			_loading = 0;
-			
+
 			_content.innerHTML = decoder(_xhr_agent.responseText);
 			updateScrollPosition(!state);
-			if(!isFromHistory){
-				updateState(path_moveTo);//pushState
+			if (!isFromHistory) {
+				updateState(path_moveTo); //pushState
 			}
 			_path_current = path_moveTo;
 			_xhr_agent = null;
@@ -144,42 +144,49 @@
 		};
 		_xhr_agent.timeout = 5000;
 		//xhr.on("error",function(e){});
-		_xhr_agent.ontimeout =
-		_xhr_agent.onerror = xhr_fallback;
+		_xhr_agent.ontimeout = _xhr_agent.onerror = xhr_fallback;
 		_loading = 1;
 	}
 
-	if(_history.pushState){
+	if (_history.pushState) {
 		_history.scrollRestoration = "manual";
-		if(_history.state)updateScrollPosition();
+		if (_history.state) updateScrollPosition();
 		//色々試した結果落ち着いたスクロール同期法がこれ。
 		//若干キモいけどyahoo/fluxible.gitもこんな感じだし…
 		//挙動いい感じにするにはこれしかないらしい(半ば諦め
 		//なんかいい案あれば下さい
 		//_windowAddEventListener("scroll", updateState);
 		setInterval(updateState, 500);
-		
-		_windowAddEventListener("popstate", function(e){
-			loadPage(_location.pathname, e.state, 1);
-		}, false);
-		
-		_windowAddEventListener("click", function(e){
-			if(e.button === 2 || e.ctrlKey || e.altKey || e.shiftKey)return;
-			for(
-				var href, target = e.target;
-				target.parentNode && target.parentNode !== target;
-				target = target.parentNode
-			){
-				if(target.nodeName === "A"){
-					href = target.getAttribute("href");
-					if(href.match(/^(?:https?|mailto):/))href = null;
-					break;
+
+		_windowAddEventListener(
+			"popstate",
+			function(e) {
+				loadPage(_location.pathname, e.state, 1);
+			},
+			false,
+		);
+
+		_windowAddEventListener(
+			"click",
+			function(e) {
+				if (e.button === 2 || e.ctrlKey || e.altKey || e.shiftKey) return;
+				for (
+					var href, target = e.target;
+					target.parentNode && target.parentNode !== target;
+					target = target.parentNode
+				) {
+					if (target.nodeName === "A") {
+						href = target.getAttribute("href");
+						if (href.match(/^(?:https?|mailto):/)) href = null;
+						break;
+					}
 				}
-			}
-			if(href){
-				e.preventDefault();
-				loadPage(href);
-			}
-		}, true);
+				if (href) {
+					e.preventDefault();
+					loadPage(href);
+				}
+			},
+			true,
+		);
 	}
 })();
