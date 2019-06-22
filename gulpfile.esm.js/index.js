@@ -1,28 +1,28 @@
 //const fs = require("mz/fs");
-const path = require("path");
+import path from "path";
 //const util = require("util");
 //const {Transform} = require("stream");
 
-const { BUILD_CONF, PATH_CONF, TEST_SERVER_CONF } = require("./gulpconf");
+import { BUILD_CONF, PATH_CONF, TEST_SERVER_CONF } from "./constants";
 
-const gulp = require("gulp");
-const log = require("fancy-log");
-const colors = require("ansi-colors");
+import gulp from "gulp";
+import log from "fancy-log";
+import colors from "ansi-colors";
 
-const rename = require("gulp-rename");
-const htmlmin = require("gulp-htmlmin");
-const plumber = require("gulp-plumber");
-//const watch = require("gulp-watch");
-const mirror = require("gulp-mirror");
-const merge = require("merge2");
-const eol = require("gulp-eol");
-const concat = require("gulp-concat");
+import rename from "gulp-rename";
+import htmlmin from "gulp-htmlmin";
+import plumber from "gulp-plumber";
+//import watch from "gulp-watch";
+import mirror from "gulp-mirror";
+import merge from "merge2";
+import eol from "gulp-eol";
+import concat from "gulp-concat";
 const uglifyjs = require("gulp-uglify/composer")(require("uglify-es"), console);
-const cleanCSS = require("gulp-clean-css");
-const changed = require("gulp-changed");
-const sitemap = require("gulp-sitemap");
+import cleanCSS from "gulp-clean-css";
+import changed from "gulp-changed";
+import sitemap from "gulp-sitemap";
 
-const lazypipe = require("lazypipe");
+import lazypipe from "lazypipe";
 
 const htmlmin_opts = { collapseWhitespace: true };
 const plumber_custom = lazypipe().pipe(
@@ -34,24 +34,25 @@ const plumber_custom = lazypipe().pipe(
 	},
 );
 
-const xste = require("./lib/gulp-xste");
-const xsspa = require("./lib/gulp-xsspa");
-const md2json = require("./lib/gulp-md2json");
-const ogp = require("./lib/gulp-ogp");
-const evaluatejs = require("./lib/gulp-evaluatejs");
+import xste from "../lib/gulp-xste";
+import xsspa from "../lib/gulp-xsspa";
+import md2json from "../lib/gulp-md2json";
+import ogp from "../lib/gulp-ogp";
+import evaluatejs from "../lib/gulp-evaluatejs";
+import {
+	colorful,
+	gulpColorfulEslint,
+	gulpWatchColorful,
+	watchColorful,
+} from "gulp-colorfulkits";
+
+import { HttpServer } from "http-server";
+
 const any2lf = lazypipe().pipe(
 	eol,
 	"\n",
 	false,
 );
-const {
-	colorful,
-	gulpColorfulEslint,
-	gulpWatchColorful,
-	watchColorful,
-} = require("gulp-colorfulkits");
-
-const { HttpServer } = require("http-server");
 
 //init xste&xsspa instance
 var xste_agent;

@@ -1,0 +1,32 @@
+gulpRenderedPageByTemplateBuilder：jsonを、SSRして、完全HTML化
+gulpRenderedPageByRawBuilder:部分HTMLを、完全HTML化
+gulpSourcePageByTemplateBuilder:".src.json"にリネーム
+gulpSourcePageByRawBuilder:HTMLを、圧縮後".src.json"にリネーム
+gulpJsBuilder:uglifyとか
+gulpCssBuilder:minifyとか
+
+gulpPageByTemplateBuilder:"json用"
+	gulpRenderedPageByTemplateBuilder
+	gulpSourcePageByTemplateBuilder
+gulpPageByRawBuilder:"html用"
+	gulpRenderedPageByRawBuilder
+	gulpSourcePageByRawBuilder
+
+gulpRenderedPageBuilder:base.htmlが関わるものをビルドする
+	"**/pages/*.html"->gulpRenderedPageByRawBuilder
+	"**/pages/*.json"->gulpRenderedPageByTemplateBuilder
+	"**/pages/*.md"->md2json->gulpRenderedPageByTemplateBuilder
+	//jsが足りないよ
+
+gulpBuildXstaBundle:xsteバンドル
+
+gulpBuildAppBundle:全jsをまとめる
+
+gulpBuildSitemap:サイトマップビルド
+
+gulpBuildAll:全部ビルド
+
+
+
+rawjs:buildAll
+rawcss:buildAll
